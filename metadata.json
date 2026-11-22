@@ -1,0 +1,6 @@
+{
+  "name": "BAKR. — Burger Rumahan Panggang",
+  "description": "Landing page produk burger rumahan BAKR. dengan menu smash burger segar, perakit burger kustom interaktif, dan pemesanan langsung via WhatsApp.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
