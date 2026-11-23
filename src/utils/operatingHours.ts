@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 export const BAKR_OPERATING_HOURS = {
-  enforceOperatingHours: false,
+  enforceOperatingHours: true,
   openHour: 9,
   openMinute: 0,
   closeHour: 17,

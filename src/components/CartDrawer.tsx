@@ -49,14 +49,14 @@ export function CartDrawer({
     );
 
     return [
-      `Halo Dapur BAKR.! Saya ingin pesan burger (${orderId}):`,
+      `Halo Dapur BAKR.! Saya ingin pesan (${orderId}):`,
       '',
       ...lines,
       '',
       `Total Pesanan: ${formatRupiah(subtotal)}`,
       `Nama: ${customerName.trim()}`,
       `No. HP: ${phone.trim()}`,
-      `Metode: ${orderMethod === 'delivery' ? 'Antar Kurir' : 'Ambil di Dapur BAKR.'}`,
+      `Metode: ${orderMethod === 'delivery' ? 'Antar Kurir' : 'Bakr House'}`,
       orderMethod === 'delivery' ? `Alamat: ${address.trim()}` : '',
       notes.trim() ? `Catatan: ${notes.trim()}` : '',
     ]
@@ -387,7 +387,7 @@ export function CartDrawer({
                               : 'border-[#e8e1df] text-[#5a5250] hover:border-[#d9291a]/50'
                           }`}
                         >
-                          Ambil di Dapur
+                          Bakr House
                         </button>
                       </div>
                     </div>
