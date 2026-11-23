@@ -5,6 +5,7 @@ import {
   ExternalLink,
   Instagram,
   MapPin,
+  Share2,
   ShoppingBag,
 } from 'lucide-react';
 import { BAKR_CONTACT } from '../data/menuData';
@@ -21,6 +22,13 @@ interface FooterSectionProps {
 export function FooterSection({ onOpenCart }: FooterSectionProps) {
   const [displayAddress, setDisplayAddress] = useState(DEFAULT_BAKR_ADDRESS);
   const [copiedAddress, setCopiedAddress] = useState(false);
+  const [copiedShareUrl, setCopiedShareUrl] = useState(false);
+  const [showShareFallback, setShowShareFallback] = useState(false);
+
+  const shareUrl =
+    typeof window !== 'undefined' ? window.location.href.split('#')[0] : '';
+  const shareText = `Cobain smoked brisket burgers, rice bowls & pasta dari BAKR. (${BAKR_CONTACT.instagramHandle})!`;
+  const whatsappShareUrl = `https://wa.me/?text=${encodeURIComponent(`${shareText}\n${shareUrl}`)}`;
 
   const handlePlaceResolved = useCallback((place: ResolvedPlace) => {
     if (place.formattedAddress) {
@@ -36,6 +44,37 @@ export function FooterSection({ onOpenCart }: FooterSectionProps) {
     } catch {
       setCopiedAddress(false);
     }
+  };
+
+  const handleCopyShareUrl = async () => {
+    if (!shareUrl) return;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopiedShareUrl(true);
+      window.setTimeout(() => setCopiedShareUrl(false), 2200);
+    } catch {
+      setCopiedShareUrl(false);
+    }
+  };
+
+  const handleShareSite = async () => {
+    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+      try {
+        await navigator.share({
+          title: 'BAKR. — The Smokehouse',
+          text: shareText,
+          url: shareUrl,
+        });
+        return;
+      } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') {
+          return;
+        }
+      }
+    }
+
+    setShowShareFallback((prev) => !prev);
+    void handleCopyShareUrl();
   };
 
   return (
@@ -120,7 +159,43 @@ export function FooterSection({ onOpenCart }: FooterSectionProps) {
                     </>
                   )}
                 </button>
+
+                <button
+                  type="button"
+                  onClick={handleShareSite}
+                  aria-label="Bagikan tautan BAKR. ke teman"
+                  className="inline-flex w-full sm:w-auto items-center justify-center gap-1.5 rounded-[2px] border border-white/35 px-4 py-3.5 font-mono-ui text-[11px] font-bold uppercase tracking-[0.06em] text-white/95 whitespace-nowrap shrink-0 cursor-pointer hover:border-white hover:bg-white/10 transition-colors"
+                >
+                  {copiedShareUrl ? (
+                    <>
+                      <Check className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                      <span>Link Tersalin</span>
+                    </>
+                  ) : (
+                    <>
+                      <Share2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                      <span>Bagikan</span>
+                    </>
+                  )}
+                </button>
               </div>
+
+              {showShareFallback && (
+                <div className="mt-3 flex flex-wrap items-center gap-3 rounded-[2px] border border-white/25 bg-[#b81f12]/60 px-3.5 py-2.5 text-xs text-white">
+                  <span className="text-white/90">
+                    Bagikan langsung lewat WhatsApp atau salin tautan:
+                  </span>
+                  <a
+                    href={whatsappShareUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 font-mono-ui text-[11px] font-bold uppercase tracking-[0.06em] text-white underline underline-offset-4 hover:text-white/85"
+                  >
+                    <WhatsAppIcon className="h-3.5 w-3.5 shrink-0" />
+                    <span>Kirim via WhatsApp</span>
+                  </a>
+                </div>
+              )}
             </div>
 
             {/* Right Column: Embedded Interactive Google Map Pin */}

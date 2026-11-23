@@ -4,5 +4,11 @@ dist/
 coverage/
 .DS_Store
 *.log
+*.local
 .env*
 !.env.example
+.aistudio/
+.gmp_cache/
+workspace/
+.vercel/
+.netlify/

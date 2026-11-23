@@ -20,9 +20,38 @@ export default function App() {
     try {
       const saved = localStorage.getItem(CART_STORAGE_KEY);
       if (!saved) return [];
-      const parsed = JSON.parse(saved) as CartItem[];
-      const validKeys = new Set(MENU_ITEMS.map((item) => `menu:${item.id}`));
-      return parsed.filter((item) => validKeys.has(item.cartKey));
+      const parsed: unknown = JSON.parse(saved);
+      if (!Array.isArray(parsed)) return [];
+
+      const menuByKey = new Map(MENU_ITEMS.map((item) => [`menu:${item.id}`, item]));
+      const sanitized: CartItem[] = [];
+      const seenKeys = new Set<string>();
+
+      for (const entry of parsed) {
+        if (!entry || typeof entry !== 'object') continue;
+        const record = entry as Partial<CartItem>;
+        if (typeof record.cartKey !== 'string' || seenKeys.has(record.cartKey)) continue;
+
+        const menuItem = menuByKey.get(record.cartKey);
+        if (!menuItem) continue;
+
+        const qty =
+          typeof record.quantity === 'number' && Number.isInteger(record.quantity)
+            ? Math.min(Math.max(record.quantity, 0), 99)
+            : 0;
+        if (qty <= 0) continue;
+
+        seenKeys.add(record.cartKey);
+        sanitized.push({
+          cartKey: record.cartKey,
+          title: menuItem.name,
+          unitPrice: menuItem.price,
+          quantity: qty,
+          image: menuItem.image,
+        });
+      }
+
+      return sanitized;
     } catch {
       return [];
     }
