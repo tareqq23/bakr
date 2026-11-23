@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import {
   Check,
   Copy,
@@ -11,7 +11,7 @@ import {
 import { BAKR_CONTACT } from '../data/menuData';
 import { scrollToSection } from '../utils/smoothScroll';
 import { BakrLogo } from './BakrLogo';
-import { BakrLocationMap, DEFAULT_BAKR_ADDRESS, ResolvedPlace } from './LocationSection';
+import { BakrLocationMap, DEFAULT_BAKR_ADDRESS } from './LocationSection';
 import { SectionHeaderReveal } from './SectionHeaderReveal';
 import { WhatsAppIcon } from './WhatsAppIcon';
 
@@ -20,7 +20,7 @@ interface FooterSectionProps {
 }
 
 export function FooterSection({ onOpenCart }: FooterSectionProps) {
-  const [displayAddress, setDisplayAddress] = useState(DEFAULT_BAKR_ADDRESS);
+  const displayAddress = DEFAULT_BAKR_ADDRESS;
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [copiedShareUrl, setCopiedShareUrl] = useState(false);
   const [showShareFallback, setShowShareFallback] = useState(false);
@@ -29,12 +29,6 @@ export function FooterSection({ onOpenCart }: FooterSectionProps) {
     typeof window !== 'undefined' ? window.location.href.split('#')[0] : '';
   const shareText = `Cobain smoked brisket burgers, rice bowls & pasta dari BAKR. (${BAKR_CONTACT.instagramHandle})!`;
   const whatsappShareUrl = `https://wa.me/?text=${encodeURIComponent(`${shareText}\n${shareUrl}`)}`;
-
-  const handlePlaceResolved = useCallback((place: ResolvedPlace) => {
-    if (place.formattedAddress) {
-      setDisplayAddress(place.formattedAddress);
-    }
-  }, []);
 
   const handleCopyAddress = async () => {
     try {
@@ -200,7 +194,7 @@ export function FooterSection({ onOpenCart }: FooterSectionProps) {
 
             {/* Right Column: Embedded Interactive Google Map Pin */}
             <div className="lg:col-span-6">
-              <BakrLocationMap onPlaceResolved={handlePlaceResolved} />
+              <BakrLocationMap />
             </div>
           </div>
         </div>
